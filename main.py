@@ -80,6 +80,12 @@ def main():
     mainBoard = getRandomizedBoard()                                    # generating distribution of objects
     revealedBoxes = generateRevealedBoxesData(False)                    # set object's visibility status
 
+    firstSelection = None                                               # stores the (x, y) of the first box clicked
+
+    DISPLAYSURF.fill(BGCOLOR)                                           # filling display with background color
+    startGameAnimation(mainBoard)                                       # calling start game animation to show figures
+
+
 
 def getRandomizedBoard():
 
@@ -123,6 +129,12 @@ def generateRevealedBoxesData(bool_val):
     Generate an array represents which blocks are covered
 
 
+    Args
+    ____
+
+    * bool_val: boolean-like | ???
+
+
     Return
     ____
 
@@ -132,3 +144,36 @@ def generateRevealedBoxesData(bool_val):
 
     return np.full((BOARDWIDTH, BOARDHEIGHT), bool_val)
 
+
+def startGameAnimation(board):
+
+    """
+
+    Description
+    ____
+
+
+    Randomly reveal boxes, N at a single time where N is minimal game space dimension between width and height in boxes
+
+    Args
+    ____
+
+    * board: 3-d array-like | main board with objects (pairs 'Objects - Colors') placed on it
+
+
+    """
+
+    covered_boxes = generateRevealedBoxesData(False)
+
+#   Creating a list of box coordinates in random order
+
+    boxes = np.vstack(np.transpose(np.meshgrid(np.arange(BOARDWIDTH), np.arange(BOARDHEIGHT))))
+    np.random.shuffle(boxes)
+
+    box_groups = np.split(boxes, min(BOARDWIDTH, BOARDHEIGHT))
+
+    drawBoard(board, covered_boxes)
+
+    for _ in box_groups:
+        revealBoxesAnimation(board, _)
+        coverBoxesAnimation(board, _)
