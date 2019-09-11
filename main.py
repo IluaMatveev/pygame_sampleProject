@@ -94,7 +94,6 @@ def getRandomizedBoard():
     Description
     ____
 
-
     Creates a NxM matrix filled with object to interact with during the game – colored squares with different figures
 
 
@@ -113,7 +112,7 @@ def getRandomizedBoard():
     combinations_array = np.vstack((combinations_array, combinations_array))
     np.random.shuffle(combinations_array)
 
-    result_matrix = np.split(combinations_array, BOARDWIDTH)
+    result_matrix = np.split(combinations_array, BOARDHEIGHT)
 
     return result_matrix
 
@@ -124,7 +123,6 @@ def generateRevealedBoxesData(bool_val):
 
     Description
     ____
-
 
     Generate an array represents which blocks are covered
 
@@ -142,7 +140,7 @@ def generateRevealedBoxesData(bool_val):
 
     """
 
-    return np.full((BOARDWIDTH, BOARDHEIGHT), bool_val)
+    return np.full((BOARDHEIGHT, BOARDWIDTH), bool_val)
 
 
 def startGameAnimation(board):
@@ -152,8 +150,8 @@ def startGameAnimation(board):
     Description
     ____
 
-
     Randomly reveal boxes, N at a single time where N is minimal game space dimension between width and height in boxes
+
 
     Args
     ____
@@ -167,13 +165,90 @@ def startGameAnimation(board):
 
 #   Creating a list of box coordinates in random order
 
-    boxes = np.vstack(np.transpose(np.meshgrid(np.arange(BOARDWIDTH), np.arange(BOARDHEIGHT))))
+    boxes = np.vstack(np.transpose(np.meshgrid(np.arange(BOARDHEIGHT), np.arange(BOARDWIDTH))))
     np.random.shuffle(boxes)
 
-    box_groups = np.split(boxes, min(BOARDWIDTH, BOARDHEIGHT))
+    drawBoard(board, covered_boxes)     # ????
 
-    drawBoard(board, covered_boxes)
+#   Split list of coordinate on equal separate piles to show
+
+    box_groups = np.split(boxes, min(BOARDHEIGHT, BOARDWIDTH))
 
     for _ in box_groups:
-        revealBoxesAnimation(board, _)
-        coverBoxesAnimation(board, _)
+        revealBoxesAnimation(board, _)     # ????
+        coverBoxesAnimation(board, _)     # ????
+
+
+def drawBoard(board, revealed):
+
+    """
+
+    Description
+    ____
+
+    Draws all of the boxes in their covered or revealed state
+
+
+    Args
+    ____
+
+    * board: 3-d array-like | main board with objects (pairs 'Objects - Colors') placed on it
+    * revealed
+
+
+    Return
+    ____
+
+    *
+
+    """
+
+    position_grid = np.vstack(np.transpose(np.meshgrid(np.arange(BOARDHEIGHT), np.arange(BOARDWIDTH))))
+    coordinates_grid = list(map(lambda x: leftTopCoordsOfBox(*x), position_grid))
+
+    map(lambda x: , zip(coordinates_grid, np.hstack(revealed)))
+
+
+
+
+
+
+
+
+def revealBoxesAnimation(*args):
+
+    pass
+
+
+def coverBoxesAnimation(*args):
+
+    pass
+
+
+def leftTopCoordsOfBox(boxx, boxy):
+
+    """
+
+    Description
+    ____
+
+    Convert box position to pixel coordinates
+
+
+    Args
+    ____
+
+    boxx, boxy: int | horizontal and vertical box position among other boxes
+
+
+    Return
+    ____
+
+    * coordinates: array-like | top left corner coordinates of box in pixels
+
+    """
+
+    x_coord = boxx * (BOXSIZE + GAPSIZE) + XMARGIN      # Location of box top left pixel – abscissa axis
+    y_coord = boxy * (BOXSIZE + GAPSIZE) + YMARGIN      # Location of box top left pixel – ordinate axis
+
+    return x_coord, y_coord
